@@ -1,0 +1,18 @@
+
+models:
+  efficientnet_b3:
+    arch: efficientnet_b3
+    img_size: 224
+    dropout: 0.4
+  efficientnet_b4:
+    arch: efficientnet_b4
+    img_size: 224
+    dropout: 0.4
+  resnet50:
+    arch: resnet50
+    img_size: 224
+    dropout: 0.4
+  swin_tiny:
+    arch: swin_tiny_patch4_window7_224
+    img_size: 224
+    dropout: 0.4

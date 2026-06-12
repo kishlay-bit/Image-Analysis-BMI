@@ -1,0 +1,2 @@
+Model,MAE,RMSE,R2,MAPE%,Pearson,Bias,Extreme_MAE
+EfficientNet-B3-M40,4.2682,6.3001,0.477,13.0,0.7026,-0.9135,7.7015

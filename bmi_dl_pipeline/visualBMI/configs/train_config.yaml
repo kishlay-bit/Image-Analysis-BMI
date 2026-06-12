@@ -1,0 +1,27 @@
+
+training:
+  epochs: 30
+  batch_size: 32
+  lr_head: 1e-3
+  lr_backbone: 1e-4
+  weight_decay: 1e-4
+  patience: 5
+  freeze_epochs: 5
+  num_workers: 2
+  seed: 42
+
+loss:
+  type: huber
+  delta: 1.0
+
+scheduler:
+  type: cosine_warm_restarts
+  T_0: 10
+  T_mult: 2
+
+oof:
+  n_splits: 5
+
+selection:
+  mae_weight: 0.6
+  r2_weight: 0.4

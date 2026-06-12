@@ -1,0 +1,14 @@
+{
+  "type": "weighted_ensemble",
+  "models": [
+    "efficientnet_b3",
+    "swin_tiny"
+  ],
+  "weights": [
+    0.7732,
+    0.2268
+  ],
+  "ensemble_MAE": 4.434,
+  "b3_MAE": 4.4921,
+  "swin_MAE": 4.953
+}
