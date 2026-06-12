@@ -1,5 +1,29 @@
-*.npy
+# Model weights — too large for GitHub
+*.pth
 *.pkl
+*.pt
+
+# Checkpoints
+*_checkpoint.pth
+
+# Data — never push datasets
+datasets/
+*.csv
 *.zip
+*.png.zip
+
+# Python cache
 __pycache__/
+*.pyc
+*.pyo
 .ipynb_checkpoints/
+
+# Kaggle credentials
+kaggle.json
+
+# Large result files
+results/predictions/
+
+# OS files
+.DS_Store
+Thumbs.db
