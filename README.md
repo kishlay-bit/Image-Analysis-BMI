@@ -1,154 +1,99 @@
-# BMI Prediction from Visual Features
+# Image Analysis — BMI Prediction from Facial Images
 
-A machine learning project focused on predicting Body Mass Index (BMI) using image-based visual features along with tabular biometric information.
-
-## Project Overview
-
-This project explores the relationship between human visual appearance and BMI using classical machine learning techniques. The pipeline combines image feature extraction with metadata such as weight, height, and gender to build predictive regression models.
-
-The project includes:
-
-* Data preprocessing and feature engineering
-* Exploratory Data Analysis (EDA)
-* Classical machine learning model training
-* Model evaluation and comparison
-* Visualization of prediction performance
+Research project investigating BMI estimation from facial images using classical ML and deep learning approaches. Conducted under the SWAN Lab, IIT Kharagpur (Dept. of CSE).
 
 ---
 
-## Dataset
+## Repository Structure
 
-Dataset Used:
-Visual BMI Dataset
-https://www.kaggle.com/datasets/abidur14004/visual-bmi
-
-The dataset contains:
-
-* Body and facial images
-* BMI values
-* Weight
-* Height
-* Gender labels
-
-The dataset is not included in this repository due to size limitations.
-
----
-
-## Features Used
-
-### Image Features
-
-* HOG (Histogram of Oriented Gradients)
-* Color statistics
-* Grayscale intensity statistics
-
-### Tabular Features
-
-* Weight (lb)
-* Height (in)
-* Gender
-
----
-
-## Models Implemented
-
-The following regression models were trained and evaluated:
-
-1. Linear Regression
-2. Ridge Regression
-3. Random Forest Regressor
-4. Gradient Boosting Regressor
-5. AdaBoost Regressor
-6. XGBoost Regressor
-
----
-
-## Evaluation Metrics
-
-Models were compared using:
-
-* MAE (Mean Absolute Error)
-* MSE (Mean Squared Error)
-* RMSE (Root Mean Squared Error)
-* R² Score
-* MAPE (Mean Absolute Percentage Error)
-
----
-
-## Project Structure
-
-```bash
-bmi_prediction/
-│
-├── notebooks/
-│   ├── 01_data_prep.ipynb
-│   ├── 02_model_training.ipynb
-│   └── 03_predict_bmi.ipynb
-│
-├── results/
-│   ├── eda_overview.png
-│   ├── metric_comparison.png
-│   ├── pred_vs_actual.png
-│   ├── residual_plots.png
-│   └── model_comparison.csv
-│
-├── datasets/
-├── saved_models/
-└── README.md
+```
+Image-Analysis-BMI/
+├── bmi_ml_pipeline/          # Classical ML baseline (VisualBMI dataset)
+└── bmi_dl_pipeline/
+    ├── VisualBMI/            # DL experiments on small VisualBMI dataset
+    └── Face2BMI/             # DL pipeline on large Face2BMI dataset (modular)
 ```
 
 ---
 
-## Key Workflow
+## Pipelines
 
-1. Load and clean dataset
-2. Generate image-based features
-3. Merge image and tabular features
-4. Perform person-aware train/test split
-5. Train regression models
-6. Compare model performance
-7. Save best-performing model
+### 1. `bmi_ml_pipeline` — Classical ML Baseline
 
----
+**Dataset:** [Visual BMI](https://www.kaggle.com/datasets/abidur14004/visual-bmi) (~small scale, includes weight/height/gender metadata)
 
-## Technologies Used
+**Features:**
+- HOG (Histogram of Oriented Gradients)
+- Color statistics
+- Grayscale intensity statistics
+- Tabular biometrics (weight, height, gender)
 
-* Python
-* OpenCV
-* Scikit-learn
-* XGBoost
-* NumPy
-* Pandas
-* Matplotlib
-* Scikit-image
+**Models trained:** Linear Regression, Ridge, Random Forest, Gradient Boosting, AdaBoost, XGBoost
+
+**Evaluation:** MAE, MSE, RMSE, R², MAPE
 
 ---
 
-## Results
+### 2. `bmi_dl_pipeline/VisualBMI` — Deep Learning on VisualBMI
 
-The project generated:
+**Dataset:** Visual BMI (~3,962 images)
 
-* Model comparison tables
-* Prediction vs actual plots
-* Residual analysis graphs
-* Feature-based BMI prediction models
+**Models:** EfficientNetV2-S, ConvNeXt-Small, Swin-Tiny, ViT-B/16 (via `timm`)
 
-Results and visualizations are available in the `results/` directory.
+**Key techniques:** z-score BMI normalization, CosineAnnealingLR, gradient clipping
+
+| Model | MAE | R² |
+|---|---|---|
+| EfficientNetV2-S | — | — |
+| ConvNeXt-Small | — | — |
+| Swin-Tiny | — | — |
+| **ViT-B/16** | **4.73** | **0.46** |
+
+> ViT-B/16 was the best-performing model on this dataset.
 
 ---
 
-## Future Improvements
+### 3. `bmi_dl_pipeline/Face2BMI` — Production-Scale Modular Pipeline
 
-* Deep learning based CNN models
-* Transfer learning using ResNet/EfficientNet
-* Hyperparameter optimization
-* Real-time BMI prediction interface
-* Deployment using Flask/Streamlit
+**Dataset:** [face2bmi-alignedimgs](https://www.kaggle.com/datasets/) (~59,850 aligned facial images, `final.csv`)
+
+**Architectures:** EfficientNet-B3, ViT-B/16, ConvNeXt-Base
+
+**Pipeline modules:**
+
+| File | Role |
+|---|---|
+| `face_detection.py` | Face detection and alignment preprocessing |
+| `dataset.py` | Dataset loader, augmentations |
+| `models.py` | Model definitions and backbone loading |
+| `train.py` | Training loop, mixed precision, checkpointing |
+| `evaluate.py` | Evaluation and metric computation |
+| `model_selection.py` | Cross-architecture comparison |
+| `utils.py` | Shared helpers, logging, reproducibility |
+
+**Training setup:** Kaggle T4×2 GPU, mixed-precision training, models saved to a Kaggle output dataset for persistence.
+
+**Design intent:** Backbones are structured for reuse as frozen encoders in a downstream multi-task model (BMI, puffiness, acne, stress prediction).
+
+---
+
+## Tech Stack
+
+Python · PyTorch · timm · OpenCV · Scikit-learn · XGBoost · NumPy · Pandas · Matplotlib · Kaggle (T4×2)
+
+---
+
+## Future Work
+
+- **Multi-task learning:** Unify BMI, puffiness, stress, and acne prediction under a shared encoder + task-specific heads
+- **MediaPipe landmarks:** Incorporate facial geometry features (landmark distances, facial ratios) alongside image encodings to improve R²
+- **Ensemble:** Combine ViT and ConvNeXt predictions via learned weighting for reduced MAE
+- **Deployment:** Streamlit or FastAPI interface for real-time BMI estimation from uploaded images
+- **Bias audit:** Evaluate model fairness across gender, age, and ethnicity subgroups
+- **Cross-dataset generalization:** Test Face2BMI-trained models on VisualBMI and vice versa to assess distribution shift
 
 ---
 
 ## Author
 
-Kishlay
-Computer Science and Engineering
-BIT Mesra
+**Kishlay** — B.Tech CSE, BIT Mesra | Research Intern, SWAN Lab, IIT Kharagpur
